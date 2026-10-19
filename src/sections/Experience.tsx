@@ -43,7 +43,7 @@ function TypeBadge({ type }: { type: ExperienceItem["type"] }) {
 
   return (
     <span
-      className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${colorMap[type]}`}
+      className={`inline-block px-2.5 py-0.5 rounded-full font-mono text-[11px] font-medium tracking-[0.05em] uppercase border ${colorMap[type]}`}
     >
       {type}
     </span>
@@ -242,8 +242,8 @@ export function Experience() {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center gap-4 mb-16"
         >
-          <div className="px-4 py-2 rounded-full border border-violet-500/20 bg-violet-500/5">
-            <span className="text-xs uppercase tracking-[0.3em] text-violet-400">
+          <div className="px-3.5 py-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 backdrop-blur-sm">
+            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-violet-400 font-medium">
               Career Path
             </span>
           </div>

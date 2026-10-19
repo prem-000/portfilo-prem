@@ -1,22 +1,44 @@
 import type { Metadata } from "next";
-import { Roboto, Space_Grotesk } from 'next/font/google'
+import { Instrument_Serif, Bodoni_Moda, Inter, IBM_Plex_Mono, Cormorant_Garamond } from 'next/font/google';
 import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { CustomScrollbar } from "@/components/CustomScrollbar";
 
+const instrumentSerif = Instrument_Serif({
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-serif-hero',
+  display: 'swap',
+});
 
-const roboto = Roboto({
-  weight: ['400', '500', '700'],
+const bodoniModa = Bodoni_Moda({
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-serif-display',
+  display: 'swap',
+});
+
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
-})
+});
 
-const spaceGrotesk = Space_Grotesk({
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['400', '500', '600'],
   subsets: ['latin'],
-  variable: '--font-display',
+  variable: '--font-mono',
   display: 'swap',
-})
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  variable: '--font-serif',
+  display: 'swap',
+});
 const siteUrl = "https://prem-000.github.io";
 const title = "Prema Sai Kuruva | Software Engineer";
 const description =
@@ -91,7 +113,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${roboto.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${inter.variable} ${instrumentSerif.variable} ${bodoniModa.variable} ${ibmPlexMono.variable} ${cormorantGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <SmoothScroll>

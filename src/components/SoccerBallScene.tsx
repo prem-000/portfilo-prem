@@ -160,7 +160,17 @@ function SceneContent({
   );
 }
 
-export default function SoccerBallScene() {
+import { PortfolioItem } from "@/data/types";
+
+interface SoccerBallSceneProps {
+  onViewProject?: (item: PortfolioItem) => void;
+  onSelectProject?: (item: PortfolioItem | null) => void;
+}
+
+export default function SoccerBallScene({
+  onViewProject,
+  onSelectProject,
+}: SoccerBallSceneProps = {}) {
   const mobile = useIsMobile();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const velocity = useRef<BallVelocity>({ x: 0, y: 0.003, dragging: false });
@@ -173,11 +183,14 @@ export default function SoccerBallScene() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedIndex(null);
+      if (e.key === "Escape") {
+        setSelectedIndex(null);
+        onSelectProject?.(null);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [onSelectProject]);
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     velocity.current.dragging = true;
@@ -201,11 +214,10 @@ export default function SoccerBallScene() {
   return (
     <div className="relative w-full">
       <div
-        className={`flex ${
-          mobile
-            ? "flex-col items-center"
-            : "flex-row items-center h-[80vh]"
-        }`}
+        className={`flex ${mobile
+          ? "flex-col items-center"
+          : "flex-row items-center min-h-[560px] lg:h-[75vh]"
+          }`}
       >
         {/* Ball */}
         <div
@@ -231,7 +243,14 @@ export default function SoccerBallScene() {
           >
             <SceneContent
               selectedIndex={selectedIndex}
-              setSelectedIndex={setSelectedIndex}
+              setSelectedIndex={(idx) => {
+                setSelectedIndex(idx);
+                if (idx !== null) {
+                  onSelectProject?.(portfolioItems[idx % portfolioItems.length]);
+                } else {
+                  onSelectProject?.(null);
+                }
+              }}
               velocity={velocity}
               mobile={mobile}
             />
@@ -246,7 +265,19 @@ export default function SoccerBallScene() {
               : "w-[45%] h-full flex items-center px-6"
           }
         >
-          <ProjectCard item={selectedItem} onClose={() => setSelectedIndex(null)} />
+          <ProjectCard
+            item={selectedItem}
+            onClose={() => {
+              setSelectedIndex(null);
+              onSelectProject?.(null);
+            }}
+            onViewProject={onViewProject}
+            onSelectProject={(p) => {
+              const idx = portfolioItems.findIndex((it) => it.id === p.id);
+              if (idx !== -1) setSelectedIndex(idx);
+              onSelectProject?.(p);
+            }}
+          />
         </div>
       </div>
     </div>

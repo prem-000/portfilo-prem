@@ -84,8 +84,8 @@ export const About = () => {
                         transition={{ duration: 0.6 }}
                         className="flex flex-col items-center gap-4 mb-6"
                     >
-                        <div className="px-4 py-2 rounded-full border border-cyan-500/20 bg-cyan-500/5">
-                            <span className="text-xs uppercase tracking-[0.3em] text-cyan-400">
+                        <div className="px-3.5 py-1.5 rounded-full border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm">
+                            <span className="font-mono text-[11px] uppercase tracking-[0.1em] text-cyan-400 font-medium">
                                 Technology Stack
                             </span>
                         </div>

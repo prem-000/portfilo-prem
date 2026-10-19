@@ -7,11 +7,17 @@ import { portfolioItems } from "@/data/portfolio";
 interface ProjectCardProps {
   item: PortfolioItem | null;
   onClose: () => void;
+  onViewProject?: (item: PortfolioItem) => void;
+  onSelectProject?: (item: PortfolioItem) => void;
 }
 
 const allTech = Array.from(new Set(portfolioItems.flatMap((p) => p.tech)));
 
-function IdleState() {
+function IdleState({
+  onSelectProject,
+}: {
+  onSelectProject?: (item: PortfolioItem) => void;
+}) {
   return (
     <motion.div
       key="idle"
@@ -45,50 +51,53 @@ function IdleState() {
             <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
           </svg>
         </motion.div>
-        <p className="text-xs md:text-sm text-zinc-500 tracking-wide">
+        <p className="text-xs md:text-sm text-zinc-400 tracking-wide">
           <span className="hidden md:inline">
-            Click a face on the ball to explore
+            Click a sphere face or a project below to explore
           </span>
-          <span className="md:hidden">Tap a face to explore</span>
+          <span className="md:hidden">Tap a sphere face or project to explore</span>
         </p>
       </div>
 
       {/* Project previews */}
-      <div className="space-y-2 md:space-y-3">
+      <div className="space-y-2 md:space-y-2.5">
         {portfolioItems.map((project, i) => (
           <motion.div
             key={project.id}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.15 + i * 0.1, duration: 0.5 }}
-            className="rounded-lg md:rounded-xl p-3 md:p-4"
+            transition={{ delay: 0.15 + i * 0.08, duration: 0.4 }}
+            onClick={() => onSelectProject?.(project)}
+            className="rounded-lg md:rounded-xl p-3 md:p-3.5 transition-all duration-300 cursor-pointer hover:border-violet-500/40 hover:bg-white/[0.04] group"
             style={{
               background: "rgba(255,255,255,0.02)",
               border: "1px solid rgba(255,255,255,0.06)",
             }}
           >
             <div className="flex items-center gap-2.5 md:gap-3">
-              <div
-                className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center shrink-0 text-sm md:text-lg font-bold text-white/20"
-                
-              >
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg overflow-hidden shrink-0 bg-black/40 border border-white/10 group-hover:border-violet-400/30 transition-colors">
                 <img
                   src={project.image}
                   alt={`${project.title} preview`}
                   loading="lazy"
                   decoding="async"
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <h4 className="text-xs md:text-sm font-semibold text-zinc-300">
-                  {project.title}
-                </h4>
-                <p className="text-[10px] md:text-xs text-zinc-600 mt-0.5 line-clamp-1">
-                  {project.description}
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-xs md:text-sm font-semibold text-zinc-200 group-hover:text-white transition-colors truncate">
+                    {project.title}
+                  </h4>
+                  <span className="text-[10px] text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                    Select →
+                  </span>
+                </div>
+                <p className="text-[10px] md:text-xs text-zinc-500 mt-0.5 line-clamp-1">
+                  {project.tagline || project.description}
                 </p>
               </div>
-              <div className="hidden md:flex gap-1">
+              <div className="hidden lg:flex gap-1 shrink-0">
                 {project.tech.slice(0, 2).map((t) => (
                   <span
                     key={t}
@@ -110,21 +119,21 @@ function IdleState() {
 
       {/* Tech cloud */}
       <div>
-        <p className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-zinc-600 mb-2">
-          Tech Stack
+        <p className="text-[9px] md:text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-2 font-medium">
+          Technologies
         </p>
         <div className="flex flex-wrap gap-1 md:gap-1.5">
-          {allTech.map((tech, i) => (
+          {allTech.slice(0, 14).map((tech, i) => (
             <motion.span
               key={tech}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + i * 0.04, duration: 0.3 }}
+              transition={{ delay: 0.2 + i * 0.03, duration: 0.3 }}
               className="px-2 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[10px] rounded-full"
               style={{
                 background: "rgba(139, 92, 246, 0.08)",
                 border: "1px solid rgba(139, 92, 246, 0.15)",
-                color: "#a78bfa",
+                color: "#c4b5fd",
               }}
             >
               {tech}
@@ -145,8 +154,8 @@ function IdleState() {
           <div className="text-base md:text-lg font-bold text-violet-400">
             {portfolioItems.length}
           </div>
-          <div className="text-[8px] md:text-[10px] text-zinc-600 uppercase tracking-wider">
-            Projects
+          <div className="text-[8px] md:text-[10px] text-zinc-500 uppercase tracking-wider">
+            Featured Projects
           </div>
         </div>
         <div
@@ -157,7 +166,7 @@ function IdleState() {
           <div className="text-base md:text-lg font-bold text-cyan-400">
             {allTech.length}
           </div>
-          <div className="text-[8px] md:text-[10px] text-zinc-600 uppercase tracking-wider">
+          <div className="text-[8px] md:text-[10px] text-zinc-500 uppercase tracking-wider">
             Technologies
           </div>
         </div>
@@ -169,7 +178,7 @@ function IdleState() {
           <div className="text-base md:text-lg font-bold text-emerald-400">
             {portfolioItems.filter((p) => p.github).length}
           </div>
-          <div className="text-[8px] md:text-[10px] text-zinc-600 uppercase tracking-wider">
+          <div className="text-[8px] md:text-[10px] text-zinc-500 uppercase tracking-wider">
             Open Source
           </div>
         </div>
@@ -178,7 +187,12 @@ function IdleState() {
   );
 }
 
-export default function ProjectCard({ item, onClose }: ProjectCardProps) {
+export default function ProjectCard({
+  item,
+  onClose,
+  onViewProject,
+  onSelectProject,
+}: ProjectCardProps) {
   return (
     <AnimatePresence mode="wait">
       {item ? (
@@ -194,50 +208,56 @@ export default function ProjectCard({ item, onClose }: ProjectCardProps) {
             className="relative rounded-2xl overflow-hidden"
             style={{
               background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.1)",
               backdropFilter: "blur(20px)",
               boxShadow:
-                "0 0 60px rgba(139, 92, 246, 0.15), 0 0 120px rgba(34, 211, 238, 0.05)",
+                "0 0 60px rgba(139, 92, 246, 0.18), 0 0 120px rgba(34, 211, 238, 0.06)",
             }}
           >
+            {/* Project Image Header */}
             <div
-              className="h-28 sm:h-36 md:h-44 w-full flex items-center justify-center relative overflow-hidden"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(34,211,238,0.1) 100%)",
-              }}
+              className="h-32 sm:h-40 md:h-44 w-full flex items-center justify-center relative overflow-hidden bg-black/60"
             >
-              <div className="text-5xl sm:text-6xl font-bold text-white select-none">
-                <img
-                  src={item.image}
-                  alt={`${item.title} project screenshot`}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <img
+                src={item.image}
+                alt={`${item.title} project screenshot`}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover object-top"
+              />
               <div
-                className="absolute inset-0"
+                className="absolute inset-0 pointer-events-none"
                 style={{
                   background:
-                    "linear-gradient(to bottom, transparent 50%, rgba(7,7,7,0.8) 100%)",
+                    "linear-gradient(to bottom, transparent 40%, rgba(7,7,7,0.85) 100%)",
                 }}
               />
+              <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide border border-emerald-500/30 bg-black/60 backdrop-blur-md text-emerald-400">
+                {item.details?.statusBadge || "Active Project"}
+              </span>
             </div>
 
-            <div className="p-4 sm:p-5 md:p-6 space-y-2.5 sm:space-y-3">
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
-                {item.title}
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-400 leading-relaxed line-clamp-3 sm:line-clamp-none">
+            <div className="p-4 sm:p-5 md:p-6 space-y-3">
+              <div>
+                <h3 className="font-[family-name:var(--font-display)] text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight">
+                  {item.title}
+                </h3>
+                {item.tagline && (
+                  <p className="text-[11px] sm:text-xs text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 font-medium mt-0.5">
+                    {item.tagline}
+                  </p>
+                )}
+              </div>
+
+              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed line-clamp-3">
                 {item.description}
               </p>
 
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                {item.tech.map((t) => (
+                {item.tech.slice(0, 6).map((t) => (
                   <span
                     key={t}
-                    className="px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs rounded-full"
+                    className="px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs rounded-full font-medium"
                     style={{
                       background: "rgba(139, 92, 246, 0.15)",
                       border: "1px solid rgba(139, 92, 246, 0.3)",
@@ -247,18 +267,45 @@ export default function ProjectCard({ item, onClose }: ProjectCardProps) {
                     {t}
                   </span>
                 ))}
+                {item.tech.length > 6 && (
+                  <span className="px-2 py-0.5 text-[10px] sm:text-xs rounded-full text-zinc-500 bg-white/[0.04] border border-white/10">
+                    +{item.tech.length - 6} more
+                  </span>
+                )}
               </div>
 
-              <div className="flex gap-2 sm:gap-3 pt-1 sm:pt-2">
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-2 sm:gap-2.5 pt-2">
+                {/* View Project Button */}
+                <button
+                  onClick={() => onViewProject?.(item)}
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-violet-400/40 transition-all duration-200 hover:scale-[1.02] cursor-pointer"
+                >
+                  <span>View Project</span>
+                  <svg
+                    className="w-3.5 h-3.5 text-cyan-200"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </button>
+
                 {item.github && (
                   <a
                     href={item.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 hover:scale-105"
+                    className="flex items-center gap-1.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 hover:scale-105"
                     style={{
                       background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
+                      border: "1px solid rgba(255,255,255,0.12)",
                       color: "#e2e8f0",
                     }}
                   >
@@ -279,7 +326,7 @@ export default function ProjectCard({ item, onClose }: ProjectCardProps) {
                     href={item.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 hover:scale-105"
+                    className="flex items-center gap-1.5 px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 hover:scale-105"
                     style={{
                       background:
                         "linear-gradient(135deg, rgba(139,92,246,0.3), rgba(34,211,238,0.3))",
@@ -300,21 +347,22 @@ export default function ProjectCard({ item, onClose }: ProjectCardProps) {
                       <polyline points="15 3 21 3 21 9" />
                       <line x1="10" y1="14" x2="21" y2="3" />
                     </svg>
-                    Live Demo
+                    Live
                   </a>
                 )}
               </div>
             </div>
 
+            {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
+              className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer"
               style={{
-                background: "rgba(255,255,255,0.1)",
-                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.15)",
+                border: "1px solid rgba(255,255,255,0.2)",
                 color: "#fff",
               }}
-              aria-label="Close project details"
+              aria-label="Close project preview"
             >
               <svg
                 width="12"
@@ -332,7 +380,7 @@ export default function ProjectCard({ item, onClose }: ProjectCardProps) {
           </div>
         </motion.div>
       ) : (
-        <IdleState />
+        <IdleState onSelectProject={onSelectProject} />
       )}
     </AnimatePresence>
   );

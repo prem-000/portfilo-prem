@@ -1,6 +1,6 @@
 "use client"
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import dynamic from 'next/dynamic';
 import ElectricBorder from '@/components/ElectricBorder'
 
@@ -34,6 +34,31 @@ const itemVariants = {
 
 export const HeroSection: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [roleIndex, setRoleIndex] = useState(0);
+  const prefersReducedMotion = useReducedMotion();
+
+  const roles = [
+    {
+      prefix: "",
+      title: "Software",
+      highlight: "Engineer",
+      key: "software-engineer",
+    },
+    {
+      prefix: "AI",
+      title: "Software",
+      highlight: "Engineer",
+      key: "ai-software-engineer",
+    },
+  ];
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % roles.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion, roles.length]);
 
   const navItems = [
     { label: "Home", section: "home" },
@@ -75,7 +100,7 @@ export const HeroSection: React.FC = () => {
                     .getElementById(item.section)
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="px-5 py-2.5 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/5 transition-all duration-300 cursor-pointer"
+                className="px-5 py-2.5 rounded-full font-sans text-[15px] font-normal text-white/70 hover:text-white hover:bg-white/5 transition-all duration-300 cursor-pointer"
               >
                 {item.label}
               </button>
@@ -177,7 +202,7 @@ export const HeroSection: React.FC = () => {
 
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full py-4 rounded-2xl hover:text-white transition-all duration-300 cursor-pointer"
+                      className="w-full py-4 rounded-2xl font-sans text-[15px] font-normal text-white/80 hover:text-white transition-all duration-300 cursor-pointer"
                     >
                       {item.label}
                     </motion.button>
@@ -200,88 +225,81 @@ export const HeroSection: React.FC = () => {
           <div className="text-center flex flex-col items-center w-full max-w-3xl mx-auto">
             <motion.div
               variants={itemVariants}
-              className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 backdrop-blur-sm md:backdrop-blur-md mb-4 md:mb-6"
+              className="inline-flex items-center gap-2 px-3.5 md:px-4 py-1.5 md:py-2 rounded-full border border-emerald-500/25 bg-emerald-500/5 backdrop-blur-sm md:backdrop-blur-md mb-4 md:mb-6"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span className="text-[10px] md:text-xs tracking-[0.15em] md:tracking-[0.2em] text-emerald-300 uppercase">
+              <span className="font-mono text-[11px] md:text-[12px] tracking-[0.08em] md:tracking-[0.1em] text-emerald-300 uppercase font-normal">
                 Available for new opportunities
               </span>
             </motion.div>
 
             <motion.p
               variants={itemVariants}
-              className="text-cyan-400 uppercase tracking-[0.2em] md:tracking-[0.3em] text-sm md:text-base mb-3 md:mb-4"
+              className="font-serif-display text-[clamp(1.5rem,2.5vw,2.25rem)] text-white/95 font-normal tracking-[0.04em] mb-2 md:mb-3 drop-shadow-[0_2px_12px_rgba(255,255,255,0.12)] uppercase"
             >
-              Prema Sai Kuruva
+              PREMA SAI KURUVA
             </motion.p>
 
-            <motion.h1
+            <motion.div
               variants={itemVariants}
-              className="text-5xl md:text-7xl font-bold leading-[0.95] tracking-[-0.06em] text-white"
+              className="w-full min-h-[100px] sm:min-h-[125px] md:min-h-[145px] flex items-center justify-center my-1"
             >
-              Software
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400">
-                Engineer
-              </span>
-            </motion.h1>
+              <AnimatePresence mode="wait">
+                <motion.h1
+                  key={roles[roleIndex].key}
+                  initial={{
+                    opacity: 0,
+                    y: prefersReducedMotion ? 0 : 16,
+                    filter: prefersReducedMotion ? "none" : "blur(6px)",
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    filter: "none",
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: prefersReducedMotion ? 0 : -16,
+                    filter: prefersReducedMotion ? "none" : "blur(6px)",
+                  }}
+                  transition={{
+                    duration: 0.45,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="font-editorial text-[clamp(4rem,7vw,6.5rem)] font-normal tracking-[-0.03em] leading-[0.95] text-center"
+                >
+                  <span className="inline-flex flex-wrap items-center justify-center gap-x-3 sm:gap-x-4 gap-y-1">
+                    <span className="inline-flex items-center gap-x-2 sm:gap-x-2.5">
+                      {roles[roleIndex].prefix && (
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-cyan-300 to-violet-400 drop-shadow-[0_0_24px_rgba(34,211,238,0.45)]">
+                          {roles[roleIndex].prefix}
+                        </span>
+                      )}
+                      <span className="text-white drop-shadow-[0_2px_18px_rgba(255,255,255,0.12)]">
+                        {roles[roleIndex].title}
+                      </span>
+                    </span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 drop-shadow-[0_0_32px_rgba(168,85,247,0.45)]">
+                      {roles[roleIndex].highlight}
+                    </span>
+                  </span>
+                </motion.h1>
+              </AnimatePresence>
+            </motion.div>
 
             <motion.p
               variants={itemVariants}
-              className="mt-4 md:mt-8 text-gray-400 text-sm md:text-lg max-w-xl mx-auto"
+              className="mt-5 md:mt-8 text-neutral-400 font-sans font-normal text-[clamp(1rem,1.25vw,1.2rem)] leading-[1.6] max-w-xl mx-auto"
             >
               Backend &amp; AI-focused AIML student building FastAPI microservices,
               ML inference pipelines, and AI-powered developer tools.
               Experienced with Python, PostgreSQL, FastAPI, Next.js, and LLM integrations.
             </motion.p>
-            <motion.div
-              variants={itemVariants}
-              className="mt-6 md:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
-            >
-              <ElectricBorder
-                color="#B497CF"
-                speed={1.7}
-                chaos={0.05}
-                borderRadius={16}
-              >
-                <button
-                  onClick={() => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })}
-                  className="px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium text-sm md:text-base cursor-pointer"
-                >
-                  View Projects →
-                </button>
-              </ElectricBorder>
-              <button
-                onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium text-sm md:text-base text-white/80 border border-white/15 bg-white/5 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all duration-300 cursor-pointer"
-              >
-                Get in touch
-              </button>
-            </motion.div>
           </div>
         </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.button
-          aria-label="Scroll to about section"
-          onClick={() => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
-          className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex-col items-center gap-2 text-white/40 hover:text-white/80 transition-colors cursor-pointer"
-        >
-          <span className="text-[10px] uppercase tracking-[0.25em]">Scroll</span>
-          <span className="flex h-9 w-5 items-start justify-center rounded-full border border-white/20 p-1">
-            <motion.span
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-              className="h-1.5 w-1.5 rounded-full bg-white/70"
-            />
-          </span>
-        </motion.button>
       </div>
     </div>
   );

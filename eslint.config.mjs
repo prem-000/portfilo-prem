@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/no-explicit-any": "warn",
       "react-hooks/immutability": "warn",
       "react-hooks/purity": "warn",
+      "react-hooks/set-state-in-effect": "warn",
     },
   },
   // Override default ignores of eslint-config-next.
